@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5efe2">
+<meta name="description" content="数学主题 2048。滑动棋盘，合并相同标签，从 rng 一路走向 field。">
+<title>RING · 数学 2048</title>
+<style>
+:root{color-scheme:light;--ink:#655d53;--muted:#8b7e6c;--paper:#f7f2e7;--accent:#e77553;--board:#b8ac9d;--gap:12px}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 0% 6%,#f5dfb4 0,transparent 43%),radial-gradient(ellipse at 100% 90%,#e6dcc5 0,transparent 48%),var(--paper);color:var(--ink);font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif}button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,summary:focus-visible{outline:3px solid #694e36;outline-offset:5px}button:disabled{opacity:.4;cursor:default}button{transition:background .15s,transform .15s}button:active:not(:disabled){transform:translateY(2px)}
+.game{width:min(100% - 32px,500px);margin:clamp(24px,6vh,64px) auto 32px}.eyebrow{font-size:10px;font-weight:750;letter-spacing:.24em;color:var(--muted);margin:0 0 14px}.header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}h1{font-size:clamp(48px,12vw,68px);letter-spacing:-.055em;margin:-9px 0 0;line-height:1.13;color:#df8252;background:linear-gradient(120deg,#dcaf48,#e77553);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}.subtitle{margin:8px 0 0;font-size:13px;line-height:1.7;color:var(--muted)}.scores{display:flex;gap:8px}.score-box{min-width:76px;text-align:center;background:#b5aa9d;border-radius:12px;padding:10px 12px;color:#fffaf1;box-shadow:0 6px 12px #76644710}.score-box.best{background:#8c7c66}.score-box span{font-size:10px;letter-spacing:.12em}.score-box strong{display:block;font-size:25px;line-height:1.25;font-variant-numeric:tabular-nums;margin-top:3px}.actions{display:flex;align-items:center;gap:12px;margin:22px 0 17px}.primary{background:var(--accent);color:#fffaf1;border:0;border-radius:10px;padding:12px 19px;font-weight:700;box-shadow:0 4px 0 #cda78c}.primary:hover{background:#d96544}.quiet{color:var(--muted);background:transparent;border:0;padding:10px;font-weight:650}.quiet:hover{color:#574c3d}.goal{margin-left:auto;font-size:11px;color:var(--muted);letter-spacing:.02em}
+.board{position:relative;border-radius:18px;padding:var(--gap);background:var(--board);box-shadow:0 17px 34px #6d604326,inset 0 1px 0 #ffffff42;touch-action:none;user-select:none;-webkit-user-select:none}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}.cell{aspect-ratio:1;border-radius:10px;background:#cdc3b6;position:relative;min-width:0}.tile{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;border-radius:10px;padding:8px;box-shadow:0 4px 9px #695e4315;background:var(--bg);color:var(--fg)}.tile-label{font-size:clamp(23px,7vw,42px);font-weight:800;letter-spacing:-.045em;line-height:1.05;text-align:center;overflow-wrap:anywhere}.tile-label.medium{font-size:clamp(18px,5vw,29px)}.tile-label.long{font-size:clamp(14px,3.5vw,21px);letter-spacing:-.025em}.tile-value{position:absolute;right:7px;bottom:5px;font-size:10px;font-weight:650;opacity:.58;font-variant-numeric:tabular-nums}.tile.fresh{animation:arrive .18s ease-out}.tile.merged{animation:pop .2s ease-out}@keyframes arrive{from{transform:scale(.5);opacity:.4}to{transform:scale(1);opacity:1}}@keyframes pop{45%{transform:scale(1.1)}100%{transform:scale(1)}}
+.overlay{position:absolute;inset:0;z-index:5;border-radius:18px;background:#f7f0dfeb;backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;gap:12px}.overlay[hidden]{display:none}.overlay h2{margin:0;font-size:32px;letter-spacing:-.04em}.overlay p{margin:0;line-height:1.8;font-size:14px}.overlay-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:6px}.controls{display:flex;justify-content:center;align-items:center;gap:6px;margin:20px 0 12px}.direction{border:1px solid #d8cdbb;background:#faf7ef;border-radius:7px;width:36px;height:32px;color:#8b7c67;font-size:17px;box-shadow:0 2px 0 #ded3c1}.direction:hover{background:#eee4d2}.control-label{font-size:11px;color:var(--muted);margin-right:8px}.hint{text-align:center;margin:0;font-size:11px;color:var(--muted);line-height:1.8}.progress{margin-top:25px;border-top:1px solid #d7cbb856;padding-top:17px}.progress-head{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em}.progress-track{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;margin:10px 0}.progress-step{height:4px;border-radius:3px;background:#ded4c4}.progress-step.reached{background:#dc9061}.level-line{font-size:11px;line-height:1.9;color:var(--muted);margin:8px 0}.level-line strong{color:#665742;font-weight:700}details{margin-top:20px;border-top:1px solid #d7cbb856;padding-top:15px;font-size:12px;color:var(--muted);line-height:1.9}summary{cursor:pointer;width:max-content;font-weight:650}details p{margin:9px 0 0}.footer{text-align:center;font-size:9px;letter-spacing:.18em;color:#9f907b;margin:24px 0 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:380px){:root{--gap:8px}.game{width:calc(100% - 24px)}.score-box{min-width:62px;padding:9px 8px}.score-box strong{font-size:21px}h1{font-size:46px}.subtitle{font-size:11px}.goal{font-size:10px}.primary{padding:11px 15px}.actions{gap:4px}.tile{padding:5px}.tile-value{font-size:8px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="game">
+  <p class="eyebrow">A SMALL GAME OF MATHEMATICS</p>
+  <header class="header">
+    <div><h1>RING</h1><p class="subtitle">滑动方块，合并相同的数学标签。</p></div>
+    <div class="scores"><div class="score-box"><span>分数</span><strong id="score">0</strong></div><div class="score-box best"><span>最高</span><strong id="best">0</strong></div></div>
+  </header>
+  <div class="actions"><button class="primary" id="new-game" type="button">↻ 新游戏</button><button class="quiet" id="undo" type="button" disabled>↶ 撤回</button><span class="goal">目标 · 2048</span></div>
+  <section class="board" id="board" aria-label="数学 2048 棋盘">
+    <div class="grid" id="grid" role="grid" aria-label="四行四列的游戏方块"></div>
+    <div class="overlay" id="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="overlay-title" aria-describedby="overlay-description">
+      <h2 id="overlay-title"></h2><p id="overlay-description"></p>
+      <div class="overlay-actions"><button class="primary" id="again" type="button">再来一局</button><button class="quiet" id="continue" type="button">继续挑战</button><button class="quiet" id="overlay-undo" type="button">撤回一步</button></div>
+    </div>
+  </section>
+  <div class="controls" aria-label="方向控制"><span class="control-label">移动</span><button class="direction" type="button" data-direction="left" aria-label="向左移动">←</button><button class="direction" type="button" data-direction="up" aria-label="向上移动">↑</button><button class="direction" type="button" data-direction="down" aria-label="向下移动">↓</button><button class="direction" type="button" data-direction="right" aria-label="向右移动">→</button></div>
+  <p class="hint">方向键 / WASD · 手机在棋盘上滑动<br>进度与最高分自动保存在当前浏览器</p>
+  <section class="progress" aria-label="本局进阶"><div class="progress-head"><span>本局进阶</span><span id="level-name">rng / 2</span></div><div class="progress-track" id="progress-track" aria-hidden="true"></div><p class="level-line" id="level-line"></p></section>
+  <details><summary>玩法与数学标签</summary><p>两个相同的方块碰到一起，就会合并成下一级。每次有效移动后会出现一个新方块；每个方块在一次移动中最多合并一次。合成 2048 即获胜，之后可以继续挑战。</p><p>例如：rng + rng → ring，ring + ring → comm-ring。这里的“+”表示游戏合并；标签是数学主题的等级名称，不是环的加法或数学推导。右下角小数字是对应的 2048 数值。</p><p>“撤回”恢复上一次有效移动前的棋盘和分数，最高纪录保留。新游戏清空本局；浏览器数据被清除时，本地记录也会清除。</p></details>
+  <p class="footer">RING · 数学 2048</p>
+  <p id="announcement" class="sr-only" aria-live="polite"></p>
+</main>
+<script>
+/* Original 2048 rules. Pure functions: input boards are never mutated. */
+(function () {
+  'use strict';
+
+  const SIZE = 4;
+  const coordinates = {
+    left:  (line, position) => line * SIZE + position,
+    right: (line, position) => line * SIZE + SIZE - 1 - position,
+    up:    (line, position) => position * SIZE + line,
+    down:  (line, position) => (SIZE - 1 - position) * SIZE + line
+  };
+
+  function slide(board, direction) {
+    const indexAt = coordinates[direction];
+    if (typeof indexAt !== 'function') throw new RangeError('Unknown move direction');
+    const next = Array(SIZE * SIZE).fill(0);
+    const mergedIndices = [];
+    let gained = 0;
+
+    for (let line = 0; line < SIZE; line++) {
+      const values = [];
+      for (let position = 0; position < SIZE; position++) {
+        const value = board[indexAt(line, position)];
+        if (value !== 0) values.push(value);
+      }
+      let destination = 0;
+      for (let source = 0; source < values.length; source++) {
+        let value = values[source];
+        const index = indexAt(line, destination++);
+        if (source + 1 < values.length && value === values[source + 1]) {
+          value *= 2;
+          gained += value;
+          mergedIndices.push(index);
+          source++; // The new tile cannot merge again during this move.
+        }
+        next[index] = value;
+      }
+    }
+
+    return {
+      board: next,
+      gained,
+      changed: next.some((value, index) => value !== board[index]),
+      mergedIndices
+    };
+  }
+
+  function addRandom(board, rng = Math.random) {
+    const next = board.slice();
+    const empty = [];
+    board.forEach((value, index) => { if (value === 0) empty.push(index); });
+    if (empty.length === 0) return { board: next, index: -1 };
+    const index = empty[Math.floor(rng() * empty.length)];
+    next[index] = rng() < 0.9 ? 2 : 4;
+    return { board: next, index };
+  }
+
+  function canMove(board) {
+    for (let row = 0; row < SIZE; row++) {
+      for (let column = 0; column < SIZE; column++) {
+        const index = row * SIZE + column;
+        if (board[index] === 0) return true;
+        if (column + 1 < SIZE && board[index] === board[index + 1]) return true;
+        if (row + 1 < SIZE && board[index] === board[index + SIZE]) return true;
+      }
+    }
+    return false;
+  }
+
+  function initial(rng = Math.random) {
+    const empty = Array(SIZE * SIZE).fill(0);
+    return addRandom(addRandom(empty, rng).board, rng).board;
+  }
+
+  globalThis.Math2048 = Object.freeze({ slide, addRandom, canMove, initial });
+}());
+
+</script>
+<script>
+(() => {
+  'use strict';
+  // 修改这组标签，就能制作你自己的数学主题。顺序对应 2、4、8……2048。
+  const LABELS = ['rng','ring','comm-ring','domain','ICD','GCD','UFD','PID','ED','field','2048'];
+  const COLORS = ['#eee7dd','#eadfc8','#edbd8b','#e9a673','#e98c65','#de7253','#d8b866','#cba54e','#b49143','#90773e','#6d6547'];
+  const KEY = 'david-math-ring-2048-v1';
+  const $ = id => document.getElementById(id);
+  const engine = globalThis.Math2048;
+  let state, previous = null, best = 0, pointer = null, modal = null;
+  const label = value => LABELS[Math.log2(value)-1] || String(value);
+  const validBoard = b => Array.isArray(b) && b.length===16 && b.every(v=>Number.isSafeInteger(v) && v>=0 && (v===0 || (v>=2 && Number.isInteger(Math.log2(v)))));
+  function save(){try{localStorage.setItem(KEY,JSON.stringify({state,best}));}catch{}}
+  function restore(){
+    try{const data=JSON.parse(localStorage.getItem(KEY));
+      if(data && Number.isSafeInteger(data.best) && data.best>=0)best=data.best;
+      if(data && data.state && validBoard(data.state.board) && data.state.board.some(Boolean) && Number.isSafeInteger(data.state.score) && data.state.score>=0){
+        state={board:data.state.board,score:data.state.score,continued:data.state.continued===true};best=Math.max(best,state.score);return;
+      }
+    }catch{}
+    state={board:engine.initial(),score:0,continued:false};
+  }
+  function render(fresh=-1, merged=[]){
+    const focusedInModal=$('overlay').contains(document.activeElement);
+    const oldModal=modal;
+    $('grid').replaceChildren();
+    state.board.forEach((value,index)=>{
+      const cell=document.createElement('div');cell.className='cell';cell.setAttribute('role','gridcell');
+      cell.setAttribute('aria-rowindex',Math.floor(index/4)+1);cell.setAttribute('aria-colindex',index%4+1);
+      cell.setAttribute('aria-label',`第 ${Math.floor(index/4)+1} 行，第 ${index%4+1} 列：${value ? label(value)+'，'+value : '空'}`);
+      if(value){
+        const level=Math.log2(value)-1, text=label(value);
+        const tile=document.createElement('div');tile.className='tile'+(fresh===index?' fresh':merged.includes(index)?' merged':'');
+        tile.style.setProperty('--bg',COLORS[Math.min(level,COLORS.length-1)]);tile.style.setProperty('--fg',level<2?'#6b6258':'#fffbef');
+        const title=document.createElement('span');title.className='tile-label'+(text.length>6?' long':text.length>4?' medium':'');title.textContent=text;
+        const number=document.createElement('span');number.className='tile-value';number.textContent=value;
+        tile.append(title,number);cell.append(tile);
+      }
+      $('grid').append(cell);
+    });
+    $('score').textContent=state.score;$('best').textContent=best;$('undo').disabled=!previous;
+    const peak=Math.max(...state.board), level=Math.log2(peak)-1;
+    $('level-name').textContent=label(peak)+' / '+peak;
+    $('progress-track').replaceChildren();$('level-line').replaceChildren();
+    LABELS.forEach((text,i)=>{
+      const step=document.createElement('span');step.className='progress-step'+(i<=level?' reached':'');$('progress-track').append(step);
+      const item=document.createElement(i===level?'strong':'span');item.textContent=text;$('level-line').append(item);if(i<LABELS.length-1)$('level-line').append(' → ');
+    });
+    const won=peak>=2048 && !state.continued, lost=!engine.canMove(state.board);
+    modal=won?'won':lost?'lost':null;$('overlay').hidden=!modal;
+    if(modal){
+      $('overlay-title').textContent=won?'合成 2048！':'这局到这里啦';
+      $('overlay-description').textContent=won?'从 rng 出发，你完成了这次数学之旅。':'没有可以移动或合并的方块了。';
+      $('continue').hidden=!won;$('overlay-undo').hidden=!previous;
+      if(oldModal!==modal)(won?$('continue'):$('again')).focus({preventScroll:true});
+    }else if(focusedInModal){$('new-game').focus({preventScroll:true});}
+    document.querySelectorAll('.direction').forEach(button=>button.disabled=Boolean(modal));
+  }
+  function move(direction){
+    if(modal)return;
+    const result=engine.slide(state.board,direction);
+    if(!result.changed)return;
+    previous={board:state.board.slice(),score:state.score,continued:state.continued};
+    const spawned=engine.addRandom(result.board);
+    state={board:spawned.board,score:state.score+result.gained,continued:state.continued};best=Math.max(best,state.score);
+    save();render(spawned.index,result.mergedIndices);
+    $('announcement').textContent=`${result.gained?'合并得 '+result.gained+' 分。':''}当前 ${state.score} 分，最高方块 ${label(Math.max(...state.board))}。`;
+  }
+  function newGame(){state={board:engine.initial(),score:0,continued:false};previous=null;save();render();$('announcement').textContent='新游戏开始。';}
+  function undo(){if(!previous)return;state=previous;previous=null;save();render();$('announcement').textContent='已撤回一步，当前 '+state.score+' 分。';}
+  $('new-game').addEventListener('click',newGame);$('again').addEventListener('click',newGame);
+  $('undo').addEventListener('click',undo);$('overlay-undo').addEventListener('click',undo);
+  $('continue').addEventListener('click',()=>{state.continued=true;save();render();});
+  document.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',()=>move(button.dataset.direction)));
+  const directions={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',a:'left',d:'right',w:'up',s:'down'};
+  document.addEventListener('keydown',event=>{
+    if(event.ctrlKey||event.metaKey||event.altKey||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;
+    if(modal && event.key==='Tab'){
+      const buttons=[...$('overlay').querySelectorAll('button')].filter(b=>!b.hidden&&!b.disabled);
+      const first=buttons[0],last=buttons[buttons.length-1];
+      if(event.shiftKey && (document.activeElement===first || !$('overlay').contains(document.activeElement))){event.preventDefault();last.focus();}
+      else if(!event.shiftKey && (document.activeElement===last || !$('overlay').contains(document.activeElement))){event.preventDefault();first.focus();}return;
+    }
+    const direction=directions[event.key]||directions[event.key.toLowerCase()];
+    if(direction){event.preventDefault();move(direction);}
+  });
+  $('board').addEventListener('pointerdown',event=>{if(modal||!event.isPrimary||event.button!==0)return;pointer={id:event.pointerId,x:event.clientX,y:event.clientY};$('board').setPointerCapture(event.pointerId);});
+  $('board').addEventListener('pointerup',event=>{
+    if(!pointer||pointer.id!==event.pointerId)return;
+    const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y;pointer=null;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<22)return;
+    move(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));
+  });
+  $('board').addEventListener('pointercancel',()=>{pointer=null;});
+  restore();render();save();
+})();
+</script>
+</body>
+</html>
