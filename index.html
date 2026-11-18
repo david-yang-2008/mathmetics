@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f5efe2">
-<meta name="description" content="数学主题 2048。滑动棋盘，合并相同标签，从 rng 一路走向 field。">
+<meta name="description" content="数学主题 2048。滑动棋盘，合并相同标签，从 rng 一路走向代数闭域。">
 <title>RING · 数学 2048</title>
 <style>
 :root{color-scheme:light;--ink:#655d53;--muted:#8b7e6c;--paper:#f7f2e7;--accent:#e77553;--board:#b8ac9d;--gap:12px}
@@ -13,6 +13,7 @@
 .board{position:relative;border-radius:18px;padding:var(--gap);background:var(--board);box-shadow:0 17px 34px #6d604326,inset 0 1px 0 #ffffff42;touch-action:none;user-select:none;-webkit-user-select:none}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}.cell{aspect-ratio:1;border-radius:10px;background:#cdc3b6;position:relative;min-width:0}.tile{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;border-radius:10px;padding:8px;box-shadow:0 4px 9px #695e4315;background:var(--bg);color:var(--fg)}.tile-label{font-size:clamp(23px,7vw,42px);font-weight:800;letter-spacing:-.045em;line-height:1.05;text-align:center;overflow-wrap:anywhere}.tile-label.medium{font-size:clamp(18px,5vw,29px)}.tile-label.long{font-size:clamp(14px,3.5vw,21px);letter-spacing:-.025em}.tile-value{position:absolute;right:7px;bottom:5px;font-size:10px;font-weight:650;opacity:.58;font-variant-numeric:tabular-nums}.tile.fresh{animation:arrive .18s ease-out}.tile.merged{animation:pop .2s ease-out}@keyframes arrive{from{transform:scale(.5);opacity:.4}to{transform:scale(1);opacity:1}}@keyframes pop{45%{transform:scale(1.1)}100%{transform:scale(1)}}
 .overlay{position:absolute;inset:0;z-index:5;border-radius:18px;background:#f7f0dfeb;backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;gap:12px}.overlay[hidden]{display:none}.overlay h2{margin:0;font-size:32px;letter-spacing:-.04em}.overlay p{margin:0;line-height:1.8;font-size:14px}.overlay-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:6px}.controls{display:flex;justify-content:center;align-items:center;gap:6px;margin:20px 0 12px}.direction{border:1px solid #d8cdbb;background:#faf7ef;border-radius:7px;width:36px;height:32px;color:#8b7c67;font-size:17px;box-shadow:0 2px 0 #ded3c1}.direction:hover{background:#eee4d2}.control-label{font-size:11px;color:var(--muted);margin-right:8px}.hint{text-align:center;margin:0;font-size:11px;color:var(--muted);line-height:1.8}.progress{margin-top:25px;border-top:1px solid #d7cbb856;padding-top:17px}.progress-head{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em}.progress-track{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;margin:10px 0}.progress-step{height:4px;border-radius:3px;background:#ded4c4}.progress-step.reached{background:#dc9061}.level-line{font-size:11px;line-height:1.9;color:var(--muted);margin:8px 0}.level-line strong{color:#665742;font-weight:700}details{margin-top:20px;border-top:1px solid #d7cbb856;padding-top:15px;font-size:12px;color:var(--muted);line-height:1.9}summary{cursor:pointer;width:max-content;font-weight:650}details p{margin:9px 0 0}.footer{text-align:center;font-size:9px;letter-spacing:.18em;color:#9f907b;margin:24px 0 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .motion-layer{position:absolute;inset:0;pointer-events:none;z-index:2}.motion-layer .tile{position:absolute;margin:0;will-change:transform;animation:none}.board.sliding .cell>.tile{visibility:hidden}.board .tile.merged{animation:land .22s cubic-bezier(.2,.75,.3,1)}@keyframes land{0%{transform:scale(.96)}45%{transform:scale(1.07)}75%{transform:scale(.99)}100%{transform:scale(1)}}
+.actions{flex-wrap:wrap}.actions button,.goal{white-space:nowrap}.tile-label.cjk{font-size:clamp(18px,5vw,27px);letter-spacing:.02em;max-width:2.2em;line-height:1.2;word-break:normal;overflow-wrap:normal}
 @media(max-width:380px){:root{--gap:8px}.game{width:calc(100% - 24px)}.score-box{min-width:62px;padding:9px 8px}.score-box strong{font-size:21px}h1{font-size:46px}.subtitle{font-size:11px}.goal{font-size:10px}.primary{padding:11px 15px}.actions{gap:4px}.tile{padding:5px}.tile-value{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -24,7 +25,7 @@
     <div><h1>RING</h1><p class="subtitle">滑动方块，合并相同的数学标签。</p></div>
     <div class="scores"><div class="score-box"><span>分数</span><strong id="score">0</strong></div><div class="score-box best"><span>最高</span><strong id="best">0</strong></div></div>
   </header>
-  <div class="actions"><button class="primary" id="new-game" type="button">↻ 新游戏</button><button class="quiet" id="undo" type="button" disabled>↶ 撤回</button><span class="goal">目标 · 2048</span></div>
+  <div class="actions"><button class="primary" id="new-game" type="button">↻ 新游戏</button><button class="quiet" id="undo" type="button" disabled>↶ 撤回 0/5</button><span class="goal">目标 · 代数闭域</span></div>
   <section class="board" id="board" aria-label="数学 2048 棋盘">
     <div class="grid" id="grid" role="grid" aria-label="四行四列的游戏方块"></div>
     <div class="motion-layer" id="motion-layer" aria-hidden="true"></div>
@@ -36,7 +37,7 @@
   <div class="controls" aria-label="方向控制"><span class="control-label">移动</span><button class="direction" type="button" data-direction="left" aria-label="向左移动">←</button><button class="direction" type="button" data-direction="up" aria-label="向上移动">↑</button><button class="direction" type="button" data-direction="down" aria-label="向下移动">↓</button><button class="direction" type="button" data-direction="right" aria-label="向右移动">→</button></div>
   <p class="hint">方向键 / WASD · 手机在棋盘上滑动<br>进度与最高分自动保存在当前浏览器</p>
   <section class="progress" aria-label="本局进阶"><div class="progress-head"><span>本局进阶</span><span id="level-name">rng / 2</span></div><div class="progress-track" id="progress-track" aria-hidden="true"></div><p class="level-line" id="level-line"></p></section>
-  <details><summary>玩法与数学标签</summary><p>两个相同的方块碰到一起，就会合并成下一级。每次有效移动后会出现一个新方块；每个方块在一次移动中最多合并一次。合成 2048 即获胜，之后可以继续挑战。</p><p>例如：rng + rng → ring，ring + ring → comm-ring。这里的“+”表示游戏合并；标签是数学主题的等级名称，不是环的加法或数学推导。右下角小数字是对应的 2048 数值。</p><p>“撤回”恢复上一次有效移动前的棋盘和分数，最高纪录保留。新游戏清空本局；浏览器数据被清除时，本地记录也会清除。</p></details>
+  <details><summary>玩法与数学标签</summary><p>两个相同的方块碰到一起，就会合并成下一级。每次有效移动后会出现一个新方块；每个方块在一次移动中最多合并一次。合成“代数闭域”（数值 2048）即获胜，之后可以继续挑战。</p><p>例如：rng + rng → ring，ring + ring → comm-ring。这里的“+”表示游戏合并；标签是数学主题的等级名称，不是环的加法或数学推导。右下角小数字是对应的 2048 数值。</p><p>保存最近 5 次有效移动，可连续撤回最多 5 步，恢复当时的棋盘和分数，最高纪录保留。撤回按钮显示当前可用步数；继续移动会记录新的历史，不能移动的操作不占步数。刷新页面后仍可撤回。新游戏清空本局与撤回历史；浏览器数据被清除时，本地记录也会清除。</p></details>
   <p class="footer">RING · 数学 2048</p>
   <p id="announcement" class="sr-only" aria-live="polite"></p>
 </main>
@@ -130,25 +131,40 @@
 (() => {
   'use strict';
   // 修改这组标签，就能制作你自己的数学主题。顺序对应 2、4、8……2048。
-  const LABELS = ['rng','ring','comm-ring','domain','ICD','GCD','UFD','PID','ED','field','2048'];
+  const LABELS = ['rng','ring','comm-ring','domain','ICD','GCD','UFD','PID','ED','field','代数闭域'];
   const COLORS = ['#eee7dd','#eadfc8','#edbd8b','#e9a673','#e98c65','#de7253','#d8b866','#cba54e','#b49143','#90773e','#6d6547'];
   const KEY = 'david-math-ring-2048-v1';
   const $ = id => document.getElementById(id);
   const engine = globalThis.Math2048;
-  let state, previous = null, best = 0, pointer = null, modal = null;
+  const UNDO_LIMIT = 5;
+  let state, undoHistory = [], best = 0, pointer = null, modal = null;
   let moving = false, queuedDirection = null, motionId = 0, activeAnimations = [];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const label = value => LABELS[Math.log2(value)-1] || String(value);
   const validBoard = b => Array.isArray(b) && b.length===16 && b.every(v=>Number.isSafeInteger(v) && v>=0 && (v===0 || (v>=2 && Number.isInteger(Math.log2(v)))));
-  function save(){try{localStorage.setItem(KEY,JSON.stringify({state,best}));}catch{}}
+  const validState = s => s && validBoard(s.board) && s.board.some(Boolean) && Number.isSafeInteger(s.score) && s.score>=0;
+  const snapshot = s => ({board:s.board.slice(),score:s.score,continued:s.continued===true});
+  function save(){try{localStorage.setItem(KEY,JSON.stringify({state,best,undoHistory}));}catch{}}
   function restore(){
     try{const data=JSON.parse(localStorage.getItem(KEY));
       if(data && Number.isSafeInteger(data.best) && data.best>=0)best=data.best;
-      if(data && data.state && validBoard(data.state.board) && data.state.board.some(Boolean) && Number.isSafeInteger(data.state.score) && data.state.score>=0){
-        state={board:data.state.board,score:data.state.score,continued:data.state.continued===true};best=Math.max(best,state.score);return;
+      if(data && validState(data.state)){
+        state=snapshot(data.state);best=Math.max(best,state.score);
+        // Older saves contain no undo history; keep their game and start recording from here.
+        const savedHistory=Array.isArray(data.undoHistory)?data.undoHistory.slice(-UNDO_LIMIT):[];
+        undoHistory=savedHistory.every(validState)?savedHistory.map(snapshot):[];
+        return;
       }
     }catch{}
     state={board:engine.initial(),score:0,continued:false};
+  }
+  function updateUndoControls(){
+    const count=undoHistory.length;
+    $('undo').disabled=count===0;$('undo').textContent=`↶ 撤回 ${count}/${UNDO_LIMIT}`;
+    $('undo').title=`可连续撤回 ${count} 步，最多保留最近 ${UNDO_LIMIT} 步`;
+    $('undo').setAttribute('aria-label',`撤回一步，当前可撤回 ${count} 步`);
+    $('overlay-undo').hidden=count===0;
+    $('overlay-undo').textContent=`撤回一步（剩余 ${count} 步）`;
   }
   function render(fresh=-1, merged=[]){
     const focusedInModal=$('overlay').contains(document.activeElement);
@@ -162,13 +178,13 @@
         const level=Math.log2(value)-1, text=label(value);
         const tile=document.createElement('div');tile.className='tile'+(fresh===index?' fresh':merged.includes(index)?' merged':'');
         tile.style.setProperty('--bg',COLORS[Math.min(level,COLORS.length-1)]);tile.style.setProperty('--fg',level<2?'#6b6258':'#fffbef');
-        const title=document.createElement('span');title.className='tile-label'+(text.length>6?' long':text.length>4?' medium':'');title.textContent=text;
+        const title=document.createElement('span');title.className='tile-label'+(text==='代数闭域'?' cjk':text.length>6?' long':text.length>4?' medium':'');title.textContent=text;
         const number=document.createElement('span');number.className='tile-value';number.textContent=value;
         tile.append(title,number);cell.append(tile);
       }
       $('grid').append(cell);
     });
-    $('score').textContent=state.score;$('best').textContent=best;$('undo').disabled=!previous;
+    $('score').textContent=state.score;$('best').textContent=best;updateUndoControls();
     const peak=Math.max(...state.board), level=Math.log2(peak)-1;
     $('level-name').textContent=label(peak)+' / '+peak;
     $('progress-track').replaceChildren();$('level-line').replaceChildren();
@@ -179,9 +195,9 @@
     const won=peak>=2048 && !state.continued, lost=!engine.canMove(state.board);
     modal=won?'won':lost?'lost':null;$('overlay').hidden=!modal;
     if(modal){
-      $('overlay-title').textContent=won?'合成 2048！':'这局到这里啦';
+      $('overlay-title').textContent=won?'合成代数闭域！':'这局到这里啦';
       $('overlay-description').textContent=won?'从 rng 出发，你完成了这次数学之旅。':'没有可以移动或合并的方块了。';
-      $('continue').hidden=!won;$('overlay-undo').hidden=!previous;
+      $('continue').hidden=!won;
       if(oldModal!==modal)(won?$('continue'):$('again')).focus({preventScroll:true});
     }else if(focusedInModal){$('new-game').focus({preventScroll:true});}
     document.querySelectorAll('.direction').forEach(button=>button.disabled=Boolean(modal));
@@ -226,11 +242,12 @@
     const result=engine.slide(state.board,direction);
     if(!result.changed)return;
     const token=++motionId;moving=true;
-    previous={board:state.board.slice(),score:state.score,continued:state.continued};
+    undoHistory.push(snapshot(state));
+    if(undoHistory.length>UNDO_LIMIT)undoHistory.shift();
     const spawned=engine.addRandom(result.board);
     state={board:spawned.board,score:state.score+result.gained,continued:state.continued};best=Math.max(best,state.score);
     // Save the completed turn immediately, including its one new tile, even if the page is closed mid-slide.
-    save();$('undo').disabled=false;
+    save();updateUndoControls();
     try{await slideTiles(result.movements);}catch{/* Fall back to the completed board if animation is unavailable. */}
     if(token!==motionId)return;
     clearMotionLayer();render(spawned.index,result.mergedIndices);
@@ -241,8 +258,8 @@
     moving=false;const next=queuedDirection;queuedDirection=null;
     if(next && !modal)move(next);
   }
-  function newGame(){cancelMotion();state={board:engine.initial(),score:0,continued:false};previous=null;save();render();$('announcement').textContent='新游戏开始。';}
-  function undo(){if(!previous)return;cancelMotion();state=previous;previous=null;save();render();$('announcement').textContent='已撤回一步，当前 '+state.score+' 分。';}
+  function newGame(){cancelMotion();state={board:engine.initial(),score:0,continued:false};undoHistory=[];save();render();$('announcement').textContent='新游戏开始。';}
+  function undo(){if(!undoHistory.length)return;cancelMotion();state=undoHistory.pop();save();render();$('announcement').textContent=`已撤回一步，当前 ${state.score} 分，还可撤回 ${undoHistory.length} 步。`;}
   function finishMotion(){if(moving){cancelMotion();render();}}
   window.addEventListener('resize',finishMotion);
   reducedMotion.addEventListener('change',finishMotion);
