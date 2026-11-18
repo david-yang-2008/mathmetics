@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f5efe2">
-<meta name="description" content="数学主题 2048。滑动棋盘，合并相同标签，从 rng 一路走向 algebraically closed field。">
+<meta name="description" content="数学主题 2048。滑动白色方块，合并相同英文标签，从 rng 一路走向 ACF（algebraically closed field）。">
 <title>RING · 数学 2048</title>
 <style>
 :root{color-scheme:light;--ink:#655d53;--muted:#8b7e6c;--paper:#f7f2e7;--accent:#e77553;--board:#b8ac9d;--gap:12px}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 0% 6%,#f5dfb4 0,transparent 43%),radial-gradient(ellipse at 100% 90%,#e6dcc5 0,transparent 48%),var(--paper);color:var(--ink);font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif}button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,summary:focus-visible{outline:3px solid #694e36;outline-offset:5px}button:disabled{opacity:.4;cursor:default}button{transition:background .15s,transform .15s}button:active:not(:disabled){transform:translateY(2px)}
 .game{width:min(100% - 32px,500px);margin:clamp(24px,6vh,64px) auto 32px}.eyebrow{font-size:10px;font-weight:750;letter-spacing:.24em;color:var(--muted);margin:0 0 14px}.header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}h1{font-size:clamp(48px,12vw,68px);letter-spacing:-.055em;margin:-9px 0 0;line-height:1.13;color:#df8252;background:linear-gradient(120deg,#dcaf48,#e77553);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}.subtitle{margin:8px 0 0;font-size:13px;line-height:1.7;color:var(--muted)}.scores{display:flex;gap:8px}.score-box{min-width:76px;text-align:center;background:#b5aa9d;border-radius:12px;padding:10px 12px;color:#fffaf1;box-shadow:0 6px 12px #76644710}.score-box.best{background:#8c7c66}.score-box span{font-size:10px;letter-spacing:.12em}.score-box strong{display:block;font-size:25px;line-height:1.25;font-variant-numeric:tabular-nums;margin-top:3px}.actions{display:flex;align-items:center;gap:12px;margin:22px 0 17px}.primary{background:var(--accent);color:#fffaf1;border:0;border-radius:10px;padding:12px 19px;font-weight:700;box-shadow:0 4px 0 #cda78c}.primary:hover{background:#d96544}.quiet{color:var(--muted);background:transparent;border:0;padding:10px;font-weight:650}.quiet:hover{color:#574c3d}.goal{margin-left:auto;font-size:11px;color:var(--muted);letter-spacing:.02em}
-.board{position:relative;border-radius:18px;padding:var(--gap);background:var(--board);box-shadow:0 17px 34px #6d604326,inset 0 1px 0 #ffffff42;touch-action:none;user-select:none;-webkit-user-select:none}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}.cell{aspect-ratio:1;border-radius:10px;background:#cdc3b6;position:relative;min-width:0}.tile{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;border-radius:10px;padding:8px;box-shadow:0 4px 9px #695e4315;background:var(--bg);color:var(--fg)}.tile-label{font-size:clamp(23px,7vw,42px);font-weight:800;letter-spacing:-.045em;line-height:1.05;text-align:center;overflow-wrap:anywhere}.tile-label.medium{font-size:clamp(18px,5vw,29px)}.tile-label.long{font-size:clamp(14px,3.5vw,21px);letter-spacing:-.025em}.tile-value{position:absolute;right:7px;bottom:5px;font-size:10px;font-weight:650;opacity:.58;font-variant-numeric:tabular-nums}.tile.fresh{animation:arrive .18s ease-out}.tile.merged{animation:pop .2s ease-out}@keyframes arrive{from{transform:scale(.5);opacity:.4}to{transform:scale(1);opacity:1}}@keyframes pop{45%{transform:scale(1.1)}100%{transform:scale(1)}}
+.board{position:relative;border-radius:18px;padding:var(--gap);background:var(--board);box-shadow:0 17px 34px #6d604326,inset 0 1px 0 #ffffff42;touch-action:none;user-select:none;-webkit-user-select:none}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}.cell{aspect-ratio:1;border-radius:10px;background:#cdc3b6;position:relative;min-width:0}.tile{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;border-radius:10px;padding:8px;box-shadow:0 4px 9px #695e4315;background:#fff;color:#655d53}.tile-label{font-size:clamp(23px,7vw,42px);font-weight:800;letter-spacing:-.045em;line-height:1.05;text-align:center;overflow-wrap:anywhere}.tile-label.medium{font-size:clamp(14px,4.2vw,24px)}.tile-label.long{font-size:clamp(14px,3.5vw,21px);letter-spacing:-.025em}.tile.fresh{animation:arrive .18s ease-out}.tile.merged{animation:pop .2s ease-out}@keyframes arrive{from{transform:scale(.5);opacity:.4}to{transform:scale(1);opacity:1}}@keyframes pop{45%{transform:scale(1.1)}100%{transform:scale(1)}}
 .overlay{position:absolute;inset:0;z-index:5;border-radius:18px;background:#f7f0dfeb;backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;gap:12px}.overlay[hidden]{display:none}.overlay h2{margin:0;font-size:32px;letter-spacing:-.04em}.overlay p{margin:0;line-height:1.8;font-size:14px}.overlay-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:6px}.controls{display:flex;justify-content:center;align-items:center;gap:6px;margin:20px 0 12px}.direction{border:1px solid #d8cdbb;background:#faf7ef;border-radius:7px;width:36px;height:32px;color:#8b7c67;font-size:17px;box-shadow:0 2px 0 #ded3c1}.direction:hover{background:#eee4d2}.control-label{font-size:11px;color:var(--muted);margin-right:8px}.hint{text-align:center;margin:0;font-size:11px;color:var(--muted);line-height:1.8}.progress{margin-top:25px;border-top:1px solid #d7cbb856;padding-top:17px}.progress-head{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em}.progress-track{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;margin:10px 0}.progress-step{height:4px;border-radius:3px;background:#ded4c4}.progress-step.reached{background:#dc9061}.level-line{font-size:11px;line-height:1.9;color:var(--muted);margin:8px 0}.level-line strong{color:#665742;font-weight:700}details{margin-top:20px;border-top:1px solid #d7cbb856;padding-top:15px;font-size:12px;color:var(--muted);line-height:1.9}summary{cursor:pointer;width:max-content;font-weight:650}details p{margin:9px 0 0}.footer{text-align:center;font-size:9px;letter-spacing:.18em;color:#9f907b;margin:24px 0 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .motion-layer{position:absolute;inset:0;pointer-events:none;z-index:2}.motion-layer .tile{position:absolute;margin:0;will-change:transform;animation:none}.board.sliding .cell>.tile{visibility:hidden}.board .tile.merged{animation:land .22s cubic-bezier(.2,.75,.3,1)}@keyframes land{0%{transform:scale(.96)}45%{transform:scale(1.07)}75%{transform:scale(.99)}100%{transform:scale(1)}}
-.actions{flex-wrap:wrap}.actions button,.goal{white-space:nowrap}.tile-label.terminal{font-size:clamp(8px,2.5vw,14px);letter-spacing:-.025em;max-width:100%;line-height:1.25;word-break:normal;overflow-wrap:normal}.progress-head #level-name{text-align:right}
-@media(max-width:380px){:root{--gap:8px}.game{width:calc(100% - 24px)}.score-box{min-width:62px;padding:9px 8px}.score-box strong{font-size:21px}h1{font-size:46px}.subtitle{font-size:11px}.goal{font-size:10px}.primary{padding:11px 15px}.actions{gap:4px}.tile{padding:5px}.tile-value{font-size:8px}}
+.actions{flex-wrap:wrap}.actions button,.goal{white-space:nowrap}.progress-head #level-name{text-align:right}
+@media(max-width:380px){:root{--gap:8px}.game{width:calc(100% - 24px)}.score-box{min-width:62px;padding:9px 8px}.score-box strong{font-size:21px}h1{font-size:46px}.subtitle{font-size:11px}.goal{font-size:10px}.primary{padding:11px 15px}.actions{gap:4px}.tile{padding:5px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -25,7 +25,7 @@
     <div><h1>RING</h1><p class="subtitle">滑动方块，合并相同的数学标签。</p></div>
     <div class="scores"><div class="score-box"><span>分数</span><strong id="score">0</strong></div><div class="score-box best"><span>最高</span><strong id="best">0</strong></div></div>
   </header>
-  <div class="actions"><button class="primary" id="new-game" type="button">↻ 新游戏</button><button class="quiet" id="undo" type="button" disabled>↶ 撤回 0/5</button><span class="goal">目标 · algebraically closed field</span></div>
+  <div class="actions"><button class="primary" id="new-game" type="button">↻ 新游戏</button><button class="quiet" id="undo" type="button" disabled>↶ 撤回 0/5</button><span class="goal">目标 · ACF</span></div>
   <section class="board" id="board" aria-label="数学 2048 棋盘">
     <div class="grid" id="grid" role="grid" aria-label="四行四列的游戏方块"></div>
     <div class="motion-layer" id="motion-layer" aria-hidden="true"></div>
@@ -37,7 +37,7 @@
   <div class="controls" aria-label="方向控制"><span class="control-label">移动</span><button class="direction" type="button" data-direction="left" aria-label="向左移动">←</button><button class="direction" type="button" data-direction="up" aria-label="向上移动">↑</button><button class="direction" type="button" data-direction="down" aria-label="向下移动">↓</button><button class="direction" type="button" data-direction="right" aria-label="向右移动">→</button></div>
   <p class="hint">方向键 / WASD · 手机在棋盘上滑动<br>进度与最高分自动保存在当前浏览器</p>
   <section class="progress" aria-label="本局进阶"><div class="progress-head"><span>本局进阶</span><span id="level-name">rng / 2</span></div><div class="progress-track" id="progress-track" aria-hidden="true"></div><p class="level-line" id="level-line"></p></section>
-  <details><summary>玩法与数学标签</summary><p>两个相同的方块碰到一起，就会合并成下一级。每次有效移动后会出现一个新方块；每个方块在一次移动中最多合并一次。合成“algebraically closed field”（数值 2048）即获胜，之后可以继续挑战。</p><p>例如：rng + rng → ring，ring + ring → comm-ring。这里的“+”表示游戏合并；标签是数学主题的等级名称，不是环的加法或数学推导。右下角小数字是对应的 2048 数值。</p><p>保存最近 5 次有效移动，可连续撤回最多 5 步，恢复当时的棋盘和分数，最高纪录保留。撤回按钮显示当前可用步数；继续移动会记录新的历史，不能移动的操作不占步数。刷新页面后仍可撤回。新游戏清空本局与撤回历史；浏览器数据被清除时，本地记录也会清除。</p></details>
+  <details><summary>玩法与数学标签</summary><p>两个相同的方块碰到一起，就会合并成下一级。每次有效移动后会出现一个新方块；每个方块在一次移动中最多合并一次。合成 ACF 即获胜。ACF 是 algebraically closed field（代数闭域）的简写，对应原版数值 2048。</p><p>例如：rng + rng → ring，ring + ring → comm-ring。这里的“+”表示游戏合并；标签是数学主题的等级名称，不是环的加法或数学推导。方块统一为白底英文标签，计分仍按 2048 规则进行。获胜后可以继续挑战，后续游戏等级显示为 ACF II、ACF III 等。</p><p>保存最近 5 次有效移动，可连续撤回最多 5 步，恢复当时的棋盘和分数，最高纪录保留。撤回按钮显示当前可用步数；继续移动会记录新的历史，不能移动的操作不占步数。刷新页面后仍可撤回。新游戏清空本局与撤回历史；浏览器数据被清除时，本地记录也会清除。</p></details>
   <p class="footer">RING · 数学 2048</p>
   <p id="announcement" class="sr-only" aria-live="polite"></p>
 </main>
@@ -131,8 +131,7 @@
 (() => {
   'use strict';
   // 修改这组标签，就能制作你自己的数学主题。顺序对应 2、4、8……2048。
-  const LABELS = ['rng','ring','comm-ring','domain','ICD','GCD','UFD','PID','ED','field','algebraically closed field'];
-  const COLORS = ['#eee7dd','#eadfc8','#edbd8b','#e9a673','#e98c65','#de7253','#d8b866','#cba54e','#b49143','#90773e','#6d6547'];
+  const LABELS = ['rng','ring','comm-ring','domain','ICD','GCD','UFD','PID','ED','field','ACF'];
   const KEY = 'david-math-ring-2048-v1';
   const $ = id => document.getElementById(id);
   const engine = globalThis.Math2048;
@@ -140,7 +139,16 @@
   let state, undoHistory = [], best = 0, pointer = null, modal = null;
   let moving = false, queuedDirection = null, motionId = 0, activeAnimations = [];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const label = value => LABELS[Math.log2(value)-1] || String(value);
+  const label = value => {
+    const index=Math.log2(value)-1;
+    if(LABELS[index])return LABELS[index];
+    // Continue past the target with distinct letter-only labels instead of numeric tiles.
+    let tier=index-9, suffix='';
+    for(const [amount,letters] of [[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]){
+      while(tier>=amount){suffix+=letters;tier-=amount;}
+    }
+    return 'ACF '+suffix;
+  };
   const validBoard = b => Array.isArray(b) && b.length===16 && b.every(v=>Number.isSafeInteger(v) && v>=0 && (v===0 || (v>=2 && Number.isInteger(Math.log2(v)))));
   const validState = s => s && validBoard(s.board) && s.board.some(Boolean) && Number.isSafeInteger(s.score) && s.score>=0;
   const snapshot = s => ({board:s.board.slice(),score:s.score,continued:s.continued===true});
@@ -175,12 +183,10 @@
       cell.setAttribute('aria-rowindex',Math.floor(index/4)+1);cell.setAttribute('aria-colindex',index%4+1);
       cell.setAttribute('aria-label',`第 ${Math.floor(index/4)+1} 行，第 ${index%4+1} 列：${value ? label(value)+'，'+value : '空'}`);
       if(value){
-        const level=Math.log2(value)-1, text=label(value);
+        const text=label(value);
         const tile=document.createElement('div');tile.className='tile'+(fresh===index?' fresh':merged.includes(index)?' merged':'');
-        tile.style.setProperty('--bg',COLORS[Math.min(level,COLORS.length-1)]);tile.style.setProperty('--fg',level<2?'#6b6258':'#fffbef');
-        const title=document.createElement('span');title.className='tile-label'+(value===2048?' terminal':text.length>6?' long':text.length>4?' medium':'');title.textContent=text;
-        const number=document.createElement('span');number.className='tile-value';number.textContent=value;
-        tile.append(title,number);cell.append(tile);
+        const title=document.createElement('span');title.className='tile-label'+(text.length>6?' long':text.length>4?' medium':'');title.textContent=text;
+        tile.append(title);cell.append(tile);
       }
       $('grid').append(cell);
     });
@@ -195,7 +201,7 @@
     const won=peak>=2048 && !state.continued, lost=!engine.canMove(state.board);
     modal=won?'won':lost?'lost':null;$('overlay').hidden=!modal;
     if(modal){
-      $('overlay-title').textContent=won?'合成 algebraically closed field！':'这局到这里啦';
+      $('overlay-title').textContent=won?'合成 ACF！':'这局到这里啦';
       $('overlay-description').textContent=won?'从 rng 出发，你完成了这次数学之旅。':'没有可以移动或合并的方块了。';
       $('continue').hidden=!won;
       if(oldModal!==modal)(won?$('continue'):$('again')).focus({preventScroll:true});
