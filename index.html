@@ -12,6 +12,7 @@
 .game{width:min(100% - 32px,500px);margin:clamp(24px,6vh,64px) auto 32px}.eyebrow{font-size:10px;font-weight:750;letter-spacing:.24em;color:var(--muted);margin:0 0 14px}.header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}h1{font-size:clamp(48px,12vw,68px);letter-spacing:-.055em;margin:-9px 0 0;line-height:1.13;color:#df8252;background:linear-gradient(120deg,#dcaf48,#e77553);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}.subtitle{margin:8px 0 0;font-size:13px;line-height:1.7;color:var(--muted)}.scores{display:flex;gap:8px}.score-box{min-width:76px;text-align:center;background:#b5aa9d;border-radius:12px;padding:10px 12px;color:#fffaf1;box-shadow:0 6px 12px #76644710}.score-box.best{background:#8c7c66}.score-box span{font-size:10px;letter-spacing:.12em}.score-box strong{display:block;font-size:25px;line-height:1.25;font-variant-numeric:tabular-nums;margin-top:3px}.actions{display:flex;align-items:center;gap:12px;margin:22px 0 17px}.primary{background:var(--accent);color:#fffaf1;border:0;border-radius:10px;padding:12px 19px;font-weight:700;box-shadow:0 4px 0 #cda78c}.primary:hover{background:#d96544}.quiet{color:var(--muted);background:transparent;border:0;padding:10px;font-weight:650}.quiet:hover{color:#574c3d}.goal{margin-left:auto;font-size:11px;color:var(--muted);letter-spacing:.02em}
 .board{position:relative;border-radius:18px;padding:var(--gap);background:var(--board);box-shadow:0 17px 34px #6d604326,inset 0 1px 0 #ffffff42;touch-action:none;user-select:none;-webkit-user-select:none}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}.cell{aspect-ratio:1;border-radius:10px;background:#cdc3b6;position:relative;min-width:0}.tile{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;border-radius:10px;padding:8px;box-shadow:0 4px 9px #695e4315;background:var(--bg);color:var(--fg)}.tile-label{font-size:clamp(23px,7vw,42px);font-weight:800;letter-spacing:-.045em;line-height:1.05;text-align:center;overflow-wrap:anywhere}.tile-label.medium{font-size:clamp(18px,5vw,29px)}.tile-label.long{font-size:clamp(14px,3.5vw,21px);letter-spacing:-.025em}.tile-value{position:absolute;right:7px;bottom:5px;font-size:10px;font-weight:650;opacity:.58;font-variant-numeric:tabular-nums}.tile.fresh{animation:arrive .18s ease-out}.tile.merged{animation:pop .2s ease-out}@keyframes arrive{from{transform:scale(.5);opacity:.4}to{transform:scale(1);opacity:1}}@keyframes pop{45%{transform:scale(1.1)}100%{transform:scale(1)}}
 .overlay{position:absolute;inset:0;z-index:5;border-radius:18px;background:#f7f0dfeb;backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;gap:12px}.overlay[hidden]{display:none}.overlay h2{margin:0;font-size:32px;letter-spacing:-.04em}.overlay p{margin:0;line-height:1.8;font-size:14px}.overlay-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:6px}.controls{display:flex;justify-content:center;align-items:center;gap:6px;margin:20px 0 12px}.direction{border:1px solid #d8cdbb;background:#faf7ef;border-radius:7px;width:36px;height:32px;color:#8b7c67;font-size:17px;box-shadow:0 2px 0 #ded3c1}.direction:hover{background:#eee4d2}.control-label{font-size:11px;color:var(--muted);margin-right:8px}.hint{text-align:center;margin:0;font-size:11px;color:var(--muted);line-height:1.8}.progress{margin-top:25px;border-top:1px solid #d7cbb856;padding-top:17px}.progress-head{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em}.progress-track{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;margin:10px 0}.progress-step{height:4px;border-radius:3px;background:#ded4c4}.progress-step.reached{background:#dc9061}.level-line{font-size:11px;line-height:1.9;color:var(--muted);margin:8px 0}.level-line strong{color:#665742;font-weight:700}details{margin-top:20px;border-top:1px solid #d7cbb856;padding-top:15px;font-size:12px;color:var(--muted);line-height:1.9}summary{cursor:pointer;width:max-content;font-weight:650}details p{margin:9px 0 0}.footer{text-align:center;font-size:9px;letter-spacing:.18em;color:#9f907b;margin:24px 0 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.motion-layer{position:absolute;inset:0;pointer-events:none;z-index:2}.motion-layer .tile{position:absolute;margin:0;will-change:transform;animation:none}.board.sliding .cell>.tile{visibility:hidden}.board .tile.merged{animation:land .22s cubic-bezier(.2,.75,.3,1)}@keyframes land{0%{transform:scale(.96)}45%{transform:scale(1.07)}75%{transform:scale(.99)}100%{transform:scale(1)}}
 @media(max-width:380px){:root{--gap:8px}.game{width:calc(100% - 24px)}.score-box{min-width:62px;padding:9px 8px}.score-box strong{font-size:21px}h1{font-size:46px}.subtitle{font-size:11px}.goal{font-size:10px}.primary{padding:11px 15px}.actions{gap:4px}.tile{padding:5px}.tile-value{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -26,6 +27,7 @@
   <div class="actions"><button class="primary" id="new-game" type="button">↻ 新游戏</button><button class="quiet" id="undo" type="button" disabled>↶ 撤回</button><span class="goal">目标 · 2048</span></div>
   <section class="board" id="board" aria-label="数学 2048 棋盘">
     <div class="grid" id="grid" role="grid" aria-label="四行四列的游戏方块"></div>
+    <div class="motion-layer" id="motion-layer" aria-hidden="true"></div>
     <div class="overlay" id="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="overlay-title" aria-describedby="overlay-description">
       <h2 id="overlay-title"></h2><p id="overlay-description"></p>
       <div class="overlay-actions"><button class="primary" id="again" type="button">再来一局</button><button class="quiet" id="continue" type="button">继续挑战</button><button class="quiet" id="overlay-undo" type="button">撤回一步</button></div>
@@ -56,19 +58,25 @@
     if (typeof indexAt !== 'function') throw new RangeError('Unknown move direction');
     const next = Array(SIZE * SIZE).fill(0);
     const mergedIndices = [];
+    const movements = [];
     let gained = 0;
 
     for (let line = 0; line < SIZE; line++) {
-      const values = [];
+      const tiles = [];
       for (let position = 0; position < SIZE; position++) {
-        const value = board[indexAt(line, position)];
-        if (value !== 0) values.push(value);
+        const from = indexAt(line, position);
+        const value = board[from];
+        if (value !== 0) tiles.push({ from, value });
       }
       let destination = 0;
-      for (let source = 0; source < values.length; source++) {
-        let value = values[source];
+      for (let source = 0; source < tiles.length; source++) {
+        const tile = tiles[source];
+        let value = tile.value;
         const index = indexAt(line, destination++);
-        if (source + 1 < values.length && value === values[source + 1]) {
+        movements.push({ from: tile.from, to: index, value: tile.value });
+        if (source + 1 < tiles.length && value === tiles[source + 1].value) {
+          const partner = tiles[source + 1];
+          movements.push({ from: partner.from, to: index, value: partner.value });
           value *= 2;
           gained += value;
           mergedIndices.push(index);
@@ -82,7 +90,8 @@
       board: next,
       gained,
       changed: next.some((value, index) => value !== board[index]),
-      mergedIndices
+      mergedIndices,
+      movements
     };
   }
 
@@ -127,6 +136,8 @@
   const $ = id => document.getElementById(id);
   const engine = globalThis.Math2048;
   let state, previous = null, best = 0, pointer = null, modal = null;
+  let moving = false, queuedDirection = null, motionId = 0, activeAnimations = [];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const label = value => LABELS[Math.log2(value)-1] || String(value);
   const validBoard = b => Array.isArray(b) && b.length===16 && b.every(v=>Number.isSafeInteger(v) && v>=0 && (v===0 || (v>=2 && Number.isInteger(Math.log2(v)))));
   function save(){try{localStorage.setItem(KEY,JSON.stringify({state,best}));}catch{}}
@@ -175,18 +186,67 @@
     }else if(focusedInModal){$('new-game').focus({preventScroll:true});}
     document.querySelectorAll('.direction').forEach(button=>button.disabled=Boolean(modal));
   }
-  function move(direction){
+  function clearMotionLayer(){
+    activeAnimations.forEach(animation=>animation.cancel());activeAnimations=[];
+    $('motion-layer').replaceChildren();$('board').classList.remove('sliding');
+    $('grid').setAttribute('aria-busy','false');
+  }
+  function cancelMotion(){
+    motionId++;moving=false;queuedDirection=null;pointer=null;clearMotionLayer();
+  }
+  async function slideTiles(movements){
+    if(reducedMotion.matches)return;
+    const cells=[...$('grid').children];
+    // Measure the actual grid so the same animation also works on phones and at browser zoom.
+    const places=cells.map(cell=>({x:cell.offsetLeft,y:cell.offsetTop,w:cell.offsetWidth,h:cell.offsetHeight}));
+    const distance=Math.max(...movements.map(({from,to})=>Math.abs(from%4-to%4)+Math.abs(Math.floor(from/4)-Math.floor(to/4))));
+    const duration=170+distance*30;
+    const layer=$('motion-layer');
+    for(const {from,to} of movements){
+      const source=cells[from].querySelector('.tile');
+      if(!source)continue;
+      const tile=source.cloneNode(true), start=places[from], end=places[to];
+      tile.classList.remove('fresh','merged');
+      Object.assign(tile.style,{left:start.x+'px',top:start.y+'px',width:start.w+'px',height:start.h+'px',zIndex:from===to?'1':'2'});
+      layer.append(tile);
+      if(from!==to){
+        activeAnimations.push(tile.animate([
+          {transform:'translate(0px,0px)'},
+          {transform:`translate(${end.x-start.x}px,${end.y-start.y}px)`}
+        ],{duration,easing:'cubic-bezier(.3,0,.2,1)',fill:'forwards'}));
+      }
+    }
+    $('board').classList.add('sliding');$('grid').setAttribute('aria-busy','true');
+    // Cancellation also settles this promise; the move token prevents old callbacks changing a new game.
+    await Promise.allSettled(activeAnimations.map(animation=>animation.finished));
+  }
+  async function move(direction){
     if(modal)return;
+    if(moving){queuedDirection=direction;return;}
     const result=engine.slide(state.board,direction);
     if(!result.changed)return;
+    const token=++motionId;moving=true;
     previous={board:state.board.slice(),score:state.score,continued:state.continued};
     const spawned=engine.addRandom(result.board);
     state={board:spawned.board,score:state.score+result.gained,continued:state.continued};best=Math.max(best,state.score);
-    save();render(spawned.index,result.mergedIndices);
+    // Save the completed turn immediately, including its one new tile, even if the page is closed mid-slide.
+    save();$('undo').disabled=false;
+    try{await slideTiles(result.movements);}catch{/* Fall back to the completed board if animation is unavailable. */}
+    if(token!==motionId)return;
+    clearMotionLayer();render(spawned.index,result.mergedIndices);
     $('announcement').textContent=`${result.gained?'合并得 '+result.gained+' 分。':''}当前 ${state.score} 分，最高方块 ${label(Math.max(...state.board))}。`;
+    // Briefly show the collision/new tile before processing the most recent buffered direction.
+    if(!reducedMotion.matches)await new Promise(resolve=>setTimeout(resolve,70));
+    if(token!==motionId)return;
+    moving=false;const next=queuedDirection;queuedDirection=null;
+    if(next && !modal)move(next);
   }
-  function newGame(){state={board:engine.initial(),score:0,continued:false};previous=null;save();render();$('announcement').textContent='新游戏开始。';}
-  function undo(){if(!previous)return;state=previous;previous=null;save();render();$('announcement').textContent='已撤回一步，当前 '+state.score+' 分。';}
+  function newGame(){cancelMotion();state={board:engine.initial(),score:0,continued:false};previous=null;save();render();$('announcement').textContent='新游戏开始。';}
+  function undo(){if(!previous)return;cancelMotion();state=previous;previous=null;save();render();$('announcement').textContent='已撤回一步，当前 '+state.score+' 分。';}
+  function finishMotion(){if(moving){cancelMotion();render();}}
+  window.addEventListener('resize',finishMotion);
+  reducedMotion.addEventListener('change',finishMotion);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)finishMotion();});
   $('new-game').addEventListener('click',newGame);$('again').addEventListener('click',newGame);
   $('undo').addEventListener('click',undo);$('overlay-undo').addEventListener('click',undo);
   $('continue').addEventListener('click',()=>{state.continued=true;save();render();});
